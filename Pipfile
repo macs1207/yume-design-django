@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+django-extensions = "*"
+djangorestframework = "==3.12.1"
+django-cors-headers = "*"
+django-allauth = "*"
+djangorestframework-simplejwt = "*"
+Django = "==3.1.2"
+google-auth = "*"
+pillow = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
