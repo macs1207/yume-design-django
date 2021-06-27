@@ -129,7 +129,8 @@ class AdView(generics.RetrieveAPIView):
                     "id": ad.goods.user.id,
                     "name": ad.goods.user.store.name
                 },
-                "images": [image.url for image in GoodsImage.objects.filter(goods__id=ad.goods.id)]
+                "images": [image.url for image in GoodsImage.objects.filter(goods__id=ad.goods.id)],
+                "like": False
             } for ad in ads]
         })
         
@@ -148,13 +149,38 @@ class GoodsOfCategoryView(generics.CreateAPIView):
                         "id": g.user.id,
                         "name": g.user.store.name
                     },
-                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)]
+                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)],
+                    "like": False
                 })
         return Response({
             "status": "success",
             "data": result
         })
-        
+
+
+class GoodsView(generics.RetrieveAPIView):
+    def get(self, request, id, *args, **kwargs):
+        try:
+            goods = Goods.objects.get(pk=id)
+            return Response({
+                "status": "success",
+                "data": {
+                    "title": goods.title,
+                    "price": goods.price,
+                    "creator": {
+                        "id": goods.user.id,
+                        "name": goods.user.store.name
+                    },
+                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=goods.id)],
+                    "like": False
+                }
+            })
+        except Goods.DoesNotExist:
+            return Response({
+                "status": "error",
+                "detail": "Goods not found"
+            })
+    
 
 class GoodsSearchView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
@@ -168,13 +194,15 @@ class GoodsSearchView(generics.CreateAPIView):
                         "id": g.user.id,
                         "name": g.user.store.name
                     },
-                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)]
+                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)],
+                    "like": False
                 } for g in goods]
         })
 ########## Goods End ###########
 
 
 ########## Goods-consumer Start ###########
+
 ########## Goods-consumer End ###########
 
 
