@@ -55,12 +55,12 @@ class UserCreateView(generics.CreateAPIView):
             return Response({
                 "status": "error",
                 "detail": "Username is exist"
-            })
+            }, status=401)
         elif User.objects.filter(email=email).exists():
             return Response({
                 "status": "error",
                 "detail": "Email is exist"
-            })
+            }, status=401)
         
         user = User.objects.create_user(username, email, password)
         user.save()
