@@ -25,3 +25,36 @@ class Profile(models.Model):
             else:
                 return 'https://icotar.com/initials/' + self.nick_name + '.svg'
 
+
+class Category(models.Model):
+    name = models.CharField(max_length=20)
+    
+
+class Store(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20)
+    description = models.TextField(blank=True)
+    
+    
+class Goods(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, blank=True, on_delete=models.CASCADE)
+    title = models.CharField(max_length=50)
+    price = models.IntegerField(blank=False)
+    publish = models.BooleanField(default=False, blank=False)
+    
+    
+class GoodsImage(models.Model):
+    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
+    url = models.URLField(blank=False)
+    
+    
+class Ad(models.Model):
+    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
+
+
+class Cart(models.Model):
+    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
+    consumer = models.ForeignKey(User, on_delete=models.CASCADE)
+    current_price = models.IntegerField(blank=False)
+    

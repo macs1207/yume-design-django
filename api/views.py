@@ -17,7 +17,7 @@ from rest_framework.exceptions import PermissionDenied
 import json
 
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import *
 
 from .serializers import AuthSerializer
 
@@ -114,3 +114,80 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         })
 
 ########## Auth End ###########
+
+
+########## Goods Start ###########
+class AdView(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        ads = Ad.objects.all()
+        return Response({
+            "status": "success",
+            "data": [{
+                "title": ad.goods.title,
+                "price": ad.goods.price,
+                "creator": {
+                    "id": ad.goods.user.id,
+                    "name": ad.goods.user.store.name
+                },
+                "images": [image.url for image in GoodsImage.objects.filter(goods__id=ad.goods.id)]
+            } for ad in ads]
+        })
+        
+        
+class GoodsOfCategoryView(generics.CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        category = Category.objects.get(name=request.data["category"])
+        goods = Goods.objects.filter(category=category)
+        result = []
+        for g in goods:
+            if g.publish:
+                result.append({
+                    "title": g.title,
+                    "price": g.price,
+                    "creator": {
+                        "id": g.user.id,
+                        "name": g.user.store.name
+                    },
+                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)]
+                })
+        return Response({
+            "status": "success",
+            "data": result
+        })
+        
+
+class GoodsSearchView(generics.CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        goods = Goods.objects.filter(title__contains=request.data["keyword"])
+        return Response({
+            "status": "success",
+            "data": [{
+                    "title": g.title,
+                    "price": g.price,
+                    "creator": {
+                        "id": g.user.id,
+                        "name": g.user.store.name
+                    },
+                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)]
+                } for g in goods]
+        })
+########## Goods End ###########
+
+
+########## Goods-consumer Start ###########
+########## Goods-consumer End ###########
+
+
+########## Goods-seller Start ###########
+########## Goods-seller End ###########
+
+
+########## Others Start ###########
+class CategoryView(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        return Response({
+            "status": "success",
+            "data": [category.name for category in categories]
+        })
+########## Others End ###########

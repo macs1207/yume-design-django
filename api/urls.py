@@ -16,6 +16,17 @@ urlpatterns = [
     path('auth/token/verify', views.TokenVerifyView.as_view(), name='token_verify'),
     path('me', views.UserProfileView.as_view(),
          name='user_profile'),  # GET, PATCH
+    
+    # Goods
+    path('ad', views.AdView.as_view()),  # GET
+    path('goods', views.GoodsOfCategoryView.as_view()),  # GET
+    path('search', views.GoodsSearchView.as_view()),  # GET
+    
+    
+    
+    
+    # Others
+    path('category', views.CategoryView.as_view()),  # GET
 
     # # Competition
     # path('competition', views.CompetitionsView.as_view()),  # POST, GET
