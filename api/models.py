@@ -56,5 +56,6 @@ class Ad(models.Model):
 class Cart(models.Model):
     goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
     consumer = models.ForeignKey(User, on_delete=models.CASCADE)
+    quantity = models.IntegerField(blank=False, default=1)
     current_price = models.IntegerField(blank=False)
     

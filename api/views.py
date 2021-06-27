@@ -191,22 +191,85 @@ class GoodsSearchView(generics.CreateAPIView):
         return Response({
             "status": "success",
             "data": [{
-                    "id": g.id,
-                    "title": g.title,
-                    "price": g.price,
-                    "creator": {
-                        "id": g.user.id,
-                        "name": g.user.store.name
-                    },
-                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)],
-                    "like": False
-                } for g in goods]
+                "id": g.id,
+                "title": g.title,
+                "price": g.price,
+                "creator": {
+                    "id": g.user.id,
+                    "name": g.user.store.name
+                },
+                "images": [image.url for image in GoodsImage.objects.filter(goods__id=g.id)],
+                "like": False
+            } for g in goods]
         })
 ########## Goods End ###########
 
 
 ########## Goods-consumer Start ###########
-
+class CartView(generics.GenericAPIView):
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        carts = Cart.objects.filter(consumer=request.user)
+        return Response({
+            "status": "success",
+            "data": [{
+                "id": cart.id,
+                "goods": {
+                    "id": cart.goods.id,
+                    "title": cart.goods.title,
+                    "price": cart.goods.price,
+                    "creator": {
+                        "id": cart.goods.user.id,
+                        "name": cart.goods.user.store.name
+                    },
+                    "images": [image.url for image in GoodsImage.objects.filter(goods__id=cart.goods.id)],
+                    "like": False
+                },
+                "quantity": cart.quantity
+            } for cart in carts]
+        })
+        
+    def post(self, request, *args, **kwargs):
+        try:
+            goods = Goods.objects.get(pk=request.data["goods_id"])
+            if Cart.objects.filter(consumer=request.user, goods=goods).exists():
+                return Response({
+                    "status": "error",
+                    "detail": "Cart is exist"
+                })
+            cart = Cart(goods=goods, consumer=request.user, quantity=request.data["quantity"], current_price=goods.price)
+            cart.save()
+            return Response({
+                "status": "success"
+            })
+        except Goods.DoesNotExist:
+            return Response({
+                "status": "error",
+                "detail": "Goods not found"
+            })
+    
+    def put(self, request, *args, **kwargs):
+        # TODO:
+        pass
+    
+    def patch(self, request, *args, **kwargs):
+        # TODO:
+        pass
+    
+    def delete(self, request, *args, **kwargs):
+        try:
+            cart = Cart.objects.get(pk=request.data["cart_id"])
+            cart.delete()
+            return Response({
+                "status": "success"
+            })
+        except Cart.DoesNotExist:
+            return Response({
+                "status": "error",
+                "detail": "Cart not found"
+            })
 ########## Goods-consumer End ###########
 
 

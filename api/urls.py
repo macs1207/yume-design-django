@@ -24,7 +24,7 @@ urlpatterns = [
     path('search', views.GoodsSearchView.as_view()),  # POST
     
     # Goods-consumer
-    
+    path('cart', views.CartView.as_view()), # GET, POST, PATCH, DELETE
     
     # Others
     path('category', views.CategoryView.as_view()),  # GET
