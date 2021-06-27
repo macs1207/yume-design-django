@@ -123,6 +123,7 @@ class AdView(generics.RetrieveAPIView):
         return Response({
             "status": "success",
             "data": [{
+                "id": ad.goods.id,
                 "title": ad.goods.title,
                 "price": ad.goods.price,
                 "creator": {
@@ -143,6 +144,7 @@ class GoodsOfCategoryView(generics.CreateAPIView):
         for g in goods:
             if g.publish:
                 result.append({
+                    "id": g.id,
                     "title": g.title,
                     "price": g.price,
                     "creator": {
@@ -165,6 +167,7 @@ class GoodsView(generics.RetrieveAPIView):
             return Response({
                 "status": "success",
                 "data": {
+                    "id": goods.id,
                     "title": goods.title,
                     "price": goods.price,
                     "creator": {
@@ -188,6 +191,7 @@ class GoodsSearchView(generics.CreateAPIView):
         return Response({
             "status": "success",
             "data": [{
+                    "id": g.id,
                     "title": g.title,
                     "price": g.price,
                     "creator": {
