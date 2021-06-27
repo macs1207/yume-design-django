@@ -10,8 +10,7 @@ urlpatterns = [
     path('', views.RetriveDocView.as_view(), name='api_doc'),
 
     # Authentication
-    path('auth/registration', views.UserCreateView.as_view(),
-         name='user_registration'),  # POST
+    path('auth/registration', views.UserCreateView.as_view(), name='user_registration'),  # POST
     path('auth/token', views.AuthView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/token/verify', views.TokenVerifyView.as_view(), name='token_verify'),

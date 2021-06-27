@@ -16,6 +16,9 @@ from rest_framework.exceptions import PermissionDenied
 
 import json
 
+from django.contrib.auth.models import User
+from .models import Profile
+
 from .serializers import AuthSerializer
 
 
@@ -43,7 +46,30 @@ class AuthView(TokenViewBase):
 
 
 class UserCreateView(generics.CreateAPIView):
-    pass
+    def post(self, request, *args, **kwargs):
+        username = request.data["username"]
+        email = request.data["email"]
+        password = request.data["password"]
+        
+        if User.objects.filter(username=username).exists():
+            return Response({
+                "status": "error",
+                "detail": "Username is exist"
+            })
+        elif User.objects.filter(email=email).exists():
+            return Response({
+                "status": "error",
+                "detail": "Email is exist"
+            })
+        
+        user = User.objects.create_user(username, email, password)
+        user.save()
+        profile = Profile(nick_name="", user=user)
+        profile.avatar = profile.avatar_url()
+        profile.save()
+        return Response({
+            'status': 'success',
+        })
 
 
 class TokenVerifyView(generics.RetrieveAPIView):
